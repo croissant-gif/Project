@@ -164,7 +164,7 @@ const handleClick = async (item) => {
     await addPresetItem(item); // Your full async logic stays the same
   } finally {
     // Re-enable button after 500ms
-    setTimeout(() => setIsDisabled(false), 150);
+    setTimeout(() => setIsDisabled(false), 50);
   }
 };
 
