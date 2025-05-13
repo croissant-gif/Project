@@ -15,19 +15,21 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 400 });
     }
 
-    //  Compare hashed password
     const isMatch = await bcrypt.compare(password, account.password);
 
     if (!isMatch) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 400 });
     }
 
-    return NextResponse.json({
-      message: 'Login successful',
-      accountId: account._id,
-      name: account.name,
-    }, { status: 200 });
-    
+    // Convert to plain object and remove password before sending
+    const accountData = account.toObject();
+    delete accountData.password;
+
+  return NextResponse.json({
+  message: 'Login successful',
+  name: account.name,
+  lastName: account.lastName
+});
   } catch (error) {
     return NextResponse.json({ message: 'Server error', error: error.message }, { status: 500 });
   }

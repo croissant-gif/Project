@@ -327,7 +327,7 @@ const deleteAllItems = async () => {
   const totalPages = Math.ceil(currentRoomInventory.length / itemsPerPage);
 
   return (
-    <section className='w-full bg-gray-100'>
+    <section className='w-full bg-gray-100 font-montserrat'>
       <div className='h-[7%] p-3 bg-zinc-300 flex justify-between items-center shadow-md'>
         <h1 className='font-medium text-lg text-black'>ROOM ITEMS</h1>
         

@@ -136,7 +136,7 @@ const Employees = () => {
   };
 
   return (
-    <section className="w-full bg-gray-50 min-h-screen">
+    <section className="w-full bg-gray-50 min-h-screen  font-montserrat">
       <div className="h-[7%] p-3 bg-zinc-300 flex justify-between items-center shadow-md">
         <h1 className="font-medium text-lg text-black">STAFF MANAGEMENT</h1>
         <button
@@ -277,49 +277,65 @@ const Employees = () => {
 )}
 
       {/* Employee Table */}
-      <table className="min-w-full border border-gray-300 mt-5 bg-white rounded-lg shadow-md">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="border border-gray-300 p-3 text-left text-black">Name</th>
-            <th className="border border-gray-300 p-3 text-left text-black">Shift</th>
-            <th className="border border-gray-300 p-3 text-left text-black">Assigned Room</th>
-            <th className="border border-gray-300 p-3 text-left text-black">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map((employee) => (
-            <tr key={employee._id} className="hover:bg-gray-100 text-black">
-              <td className="border border-gray-300 p-3">
-                {employee.name} {employee.lastName}
-              </td>
-              <td className="border border-gray-300 p-3 cursor-pointer" onClick={() => openTimeModal(employee)}>
-                {employee.schedule || 'Not set'}
-              </td>
-              <td className="border border-gray-300 p-3 text-black">
-                {employee.assignedRooms.length > 0
-                  ? employee.assignedRooms.map((room) => room.roomName).join(', ')
-                  : 'Not assigned'}
-              </td>
-              <td className="border border-gray-300 p-3 text-black">
-              <button
-                  onClick={() => openDetailModal(employee)}
-                  className="text-blue-500 hover:text-blue-700 transition mr-2"
-                >
-                  Details
-                </button>
-                <button
-                  onClick={() => removeEmployee(employee._id)}
-                  className="bg-red-500 text-white p-2 rounded-full hover:bg-red-700 transition duration-300"
-                >
-               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-            <path fillRule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clipRule="evenodd" />
-          </svg>
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    {/* Employees Table with consistent styling */}
+<div className="overflow-x-auto max-h-[650px] overflow-y-auto font-montserrat">
+  <table className="table-auto w-full rounded-2xl m-6 bg-white shadow-lg font-montserrat">
+    <thead className="w-full h-12 bg-slate-100">
+      <tr>
+        <th className="p-3 text-left text-black">Name</th>
+        <th className="p-3 text-left text-black">Shift</th>
+        <th className="p-3 text-left text-black">Assigned Room</th>
+        <th className="p-3 text-left text-black">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {employees.map((employee) => (
+        <tr key={employee._id} className="hover:bg-gray-100 text-black">
+          <td className="px-2 py-3">
+            {employee.name} {employee.lastName}
+          </td>
+          <td
+            className="px-2 py-3 cursor-pointer"
+            onClick={() => openTimeModal(employee)}
+          >
+            {employee.schedule || 'Not set'}
+          </td>
+          <td className="px-2 py-3">
+            {employee.assignedRooms.length > 0
+              ? employee.assignedRooms.map((room) => room.roomName).join(', ')
+              : 'Not assigned'}
+          </td>
+          <td className="px-2 py-3">
+            <button
+              onClick={() => openDetailModal(employee)}
+              className="text-blue-500 hover:text-blue-700 transition mr-2"
+            >
+              Details
+            </button>
+            <button
+              onClick={() => removeEmployee(employee._id)}
+              className="bg-red-500 text-white p-2 rounded-full hover:bg-red-700 transition duration-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
     </section>
   );
 };

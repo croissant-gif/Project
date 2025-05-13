@@ -18,6 +18,7 @@ export default function LoginPage() {
       router.push('/rooms');
     }
   }, [router]);
+  
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -37,11 +38,10 @@ export default function LoginPage() {
 
       if (response.ok) {
        
-        const { name } = data; // Get the name of the logged-in user from the response
-
-        // Store the username and name in localStorage
-        localStorage.setItem("username", username);  
-        localStorage.setItem("name", name);  
+       const { name, lastName } = data;
+localStorage.setItem("username", username);  
+localStorage.setItem("name", name);
+localStorage.setItem("lastName", lastName);
  
         router.push("/rooms");
       } else {
@@ -59,7 +59,7 @@ export default function LoginPage() {
   };
 
   return (
-    <section className="w-full">
+    <section className="w-full font-montserrat">
       <section className="flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-300 to-blue-600">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96 max-w-sm">
           <h2 className="text-3xl font-semibold text-center  text-black mb-6">Login</h2>

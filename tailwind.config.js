@@ -13,10 +13,12 @@ module.exports = {
       },
       fontFamily: {
         body: ["Lato"],
+        sans: ['var(--font-geist-sans)', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'monospace'],
+         roboto: ['var(--font-roboto)', 'sans-serif'],
+         montserrat: ['var(--font-montserrat)', 'sans-serif'], // ← Add this
       },
-       
     },
   },
-
   plugins: [],
 };

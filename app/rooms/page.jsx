@@ -15,6 +15,7 @@ const RoomSelection = () => {
   const [reason, setReason] = useState('');
   const [status, setStatus] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
   const [userConditions, setUserConditions] = useState([]);
   const [newCondition, setNewCondition] = useState('');
   const [isConditionModalOpen, setIsConditionModalOpen] = useState(false);
@@ -481,50 +482,50 @@ const saveReason = async () => {
  //============================================================================================================================================================================================================================= 
 
   return (
-    <section className="w-full h-screen bg-white">
-<div className="h-[7%] p-3 bg-zinc-300 flex justify-between items-center shadow-md">
-  <h1 className="font-medium text-lg text-black">ROOMS</h1>
+  <section className="w-full bg-gray-50 min-h-screen font-montserrat">
+  <div className="h-[7%] p-3 bg-zinc-300 flex justify-between items-center shadow-md">
+  <h1 className="font-medium text-lg text-black font-montserrat">ROOMS</h1>
   <div className="flex space-x-4">
     <button
       onClick={openConditionModal}
-      className="bg-blue-500 text-white p-2 rounded-xl hover:bg-blue-600 transition duration-300"
+      className="bg-blue-500 text-white p-2 rounded-xl hover:bg-blue-600 transition duration-300 font-montserrat"
     >
       Add Room Status
     </button>
 
     <button
       onClick={() => setIsRoomModalOpen(true)}
-      className="bg-green-500 text-white p-2 rounded-xl hover:bg-green-600 transition duration-300 "
+      className="bg-green-500 text-white p-2 rounded-xl hover:bg-green-600 transition duration-300 font-montserrat"
     >
       Add Room
     </button>
   </div>
-</div>
+ </div>
 
 {/*=============================================================================================================================================================================================================================
 
   {/* Modal for Reason */}
-  {isModalOpen && (
+  {isModalOpen && !selectedRoom && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50  z-20">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg font-semibold mb-4 text-black">Reason </h2>
+            <h2 className="text-lg font-semibold mb-4 text-black font-montserrat">Reason </h2>
             <textarea
               value={reason}
               onChange={handleReasonChange}
-              className="border p-2 rounded w-full h-24 text-black"
-              placeholder="Enter the reason for out of order or service"
+              className="border p-2 rounded w-full h-24 text-black font-montserrat"
+              placeholder="Enter the reason for out of order or service "
             ></textarea>
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex justify-end font-montserrat">
               <button
                 onClick={saveReason}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2"
+                className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2 font-montserrat"
               >
                 Save
               </button>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md transition"
+                className="bg-red-500 text-white px-4 py-2 rounded-md transition font-montserrat"
               >
                 Cancel
               </button>
@@ -534,44 +535,44 @@ const saveReason = async () => {
       )}
 {/*============================================================================================================================================================================================================================= */}
 {/* Modal for Adding New Condition */}
-{isConditionModalOpen && (
+{isConditionModalOpen &&  !selectedRoom && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
     <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-lg font-semibold mb-4 text-black">Add New Status</h2>
+      <h2 className="text-lg font-semibold mb-4 text-black font-montserrat">Add New Status</h2>
       
       {/* Input for adding a new condition */}
       <input
         type="text"
         value={newCondition}
         onChange={(e) => setNewCondition(e.target.value)}
-        className="border p-2 rounded w-full mb-4 text-black"
+        className="border p-2 rounded w-full mb-4 text-black font-montserrat"
         placeholder="Enter new status"
       />
       
       <div className="mt-4 flex justify-end">
         <button
           onClick={addNewCondition}
-          className="bg-green-500 text-white px-4 py-2 rounded-md transition mr-2"
+          className="bg-green-500 text-white px-4 py-2 rounded-md transition mr-2 font-montserrat"
         >
           Add
         </button>
         <button
           onClick={closeConditionModal}
-          className="bg-red-500 text-white px-4 py-2 rounded-md transition"
+          className="bg-red-500 text-white px-4 py-2 rounded-md transition font-montserrat"
         >
           Cancel
         </button>
       </div>
 
-      <h3 className="mt-4 font-semibold text-black">Your Added Status:</h3>
-      <ul className="mt-2 text-gray-600">
+      <h3 className="mt-4 font-semibold text-black font-montserrat">Your Added Status:</h3>
+      <ul className="mt-2 text-gray-600 font-montserrat">
         {userConditions.map((condition) => (
           <li key={condition._id || condition} className="flex justify-between items-center">
             {condition.name || condition}  
             
             <button
               onClick={() => deleteCondition(condition)}  // Use the entire condition object for deletion
-              className="text-red-500 ml-2"
+              className="text-red-500 ml-2 font-montserrat"
             >
               Delete
             </button>
@@ -583,17 +584,17 @@ const saveReason = async () => {
 )}
  {/*============================================================================================================================================================================================================================= 
        {/* Special Request Modal */}
-       {specialRequestModalOpen && (
+       {specialRequestModalOpen &&  !selectedRoom && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg font-semibold mb-4 text-black">Special Request</h2>
+            <h2 className="text-lg font-semibold mb-4 text-black font-montserrat">Special Request</h2>
             <textarea
               value={specialRequest}
               onChange={handleSpecialRequestChange}
-              className="border p-2 rounded w-full h-24 text-black"
+              className="border p-2 rounded w-full h-24 text-black font-montserrat"
               placeholder="Enter special request..."
             ></textarea>
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex justify-end   font-montserrat">
               <button onClick={saveSpecialRequest} className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2">
                 Save
               </button>
@@ -610,8 +611,8 @@ const saveReason = async () => {
       )}
 
       {/* Modal for Adding Room */}
-      {isRoomModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50  z-20">
+      {isRoomModalOpen &&  !selectedRoom  (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50  z-20 font-montserrat">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold mb-4 text-black">Add New Room</h2>
             <form onSubmit={addRoom}>
@@ -662,7 +663,7 @@ const saveReason = async () => {
       )}
 
 
-{specialRequestModalOpen && (
+{specialRequestModalOpen &&  !selectedRoom  && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold mb-4 text-black">Special Request</h2>
@@ -673,7 +674,7 @@ const saveReason = async () => {
               placeholder="Enter special request..."
             ></textarea>
             <div className="mt-4 flex justify-end">
-              <button onClick={saveSpecialRequest} className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2">
+              <button onClick={saveSpecialRequest} className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2 font-montserrat">
                 Save
               </button>
               <button
@@ -689,8 +690,8 @@ const saveReason = async () => {
       )}
 {/*============================================================================================================================================================================================================*/}
       {/* Rooms Table */}
-      <div className="overflow-x-auto max-h-[650px] overflow-y-auto">
-      <table className="table-auto w-full rounded-2xl m-6 bg-white shadow-lg">
+      <div className="overflow-x-auto max-h-[650px] overflow-y-auto font-montserrat">
+  <table className="table-auto w-full rounded-2xl m-6 bg-white shadow-lg font-montserrat">
       <thead className="w-full h-12 bg-slate-100">
             <tr>
               <th className="p-3 text-left text-black">Room Name</th>
