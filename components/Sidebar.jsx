@@ -62,7 +62,7 @@ useEffect(() => {
     <div className="w-full flex justify-start px-4 pt-1">
     <button 
       onClick={toggleSidebar} 
-      className="text-white text-xl focus:outline-none"
+      className="text-white text-xl focus:outline-none transform active:scale-95"
     >
       <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
         <path fillRule="evenodd" d="M3 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75H3a.75.75 0 0 1-.75-.75V5.25zm0 6a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75H3a.75.75 0 0 1-.75-.75V11.25zm0 6a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75H3a.75.75 0 0 1-.75-.75V17.25z" clipRule="evenodd" />

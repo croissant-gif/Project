@@ -141,7 +141,7 @@ const Employees = () => {
         <h1 className="font-medium text-lg text-black">STAFF MANAGEMENT</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-green-500 text-white p-2 rounded-xl hover:bg-green-600 transition duration-300"
+          className="bg-green-500 text-white p-2 rounded-xl hover:bg-green-600 transition duration-300  transform active:scale-95"
         >
           Add Staff
         </button>
@@ -204,14 +204,14 @@ const Employees = () => {
               <div className="mt-4 flex justify-end">
                 <button
                   type="submit"
-                  className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md transition mr-2 text-black"
+                  className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md transition mr-2 text-black transform active:scale-95"
                 >
                   Add
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition"
+                  className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition transform active:scale-95"
                 >
                   Cancel
                 </button>
@@ -232,7 +232,7 @@ const Employees = () => {
       <button 
         type="button" 
         onClick={closeDetailModal} 
-        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
+        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition transform active:scale-95"
       >
         Close
       </button>
@@ -265,10 +265,10 @@ const Employees = () => {
         />
       </div>
       <div className="mt-4 flex justify-end">
-        <button onClick={saveShift} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md text-black">
+        <button onClick={saveShift} className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md text-black transform active:scale-95">
           Save
         </button>
-        <button onClick={closeTimeModal} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md ml-2 text-black">
+        <button onClick={closeTimeModal} className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md ml-2 text-black transform active:scale-95">
           Cancel
         </button>
       </div>

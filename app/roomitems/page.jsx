@@ -11,6 +11,7 @@ const InventoryPage = () => {
   const [customPresetName, setCustomPresetName] = useState(''); 
   const [isDeleteMode, setIsDeleteMode] = useState(false); 
   const [customPresetPrice, setCustomPresetPrice] = useState(''); 
+  const [isDisabled, setIsDisabled] = useState(false);
 const [selectedCategory, setSelectedCategory] = useState('');
   const [activeCategory, setActiveCategory] = useState("mini-bar");
   const itemsPerPage = 99;
@@ -154,6 +155,19 @@ const toggleDeleteMode = () => {
 
   //=============================================================================================================================================================================================================================
 
+const handleClick = async (item) => {
+  if (isDisabled) return;
+
+  setIsDisabled(true);
+
+  try {
+    await addPresetItem(item); // Your full async logic stays the same
+  } finally {
+    // Re-enable button after 500ms
+    setTimeout(() => setIsDisabled(false), 150);
+  }
+};
+
   const addPresetItem = async (item) => {
     const updatedInventories = [...inventories];
     const currentRoomInventory = updatedInventories[selectedRoom - 1] || [];
@@ -193,6 +207,7 @@ const toggleDeleteMode = () => {
       console.error('Error while adding preset item:', error);
     }
   };
+  
   
 
 //=============================================================================================================================================================================================================================
@@ -338,7 +353,7 @@ const deleteAllItems = async () => {
           {/* Add Custom Preset Item Button */}
           <button
             onClick={toggleModal}
-            className="bg-blue-500 text-white p-2 rounded-xl hover:bg-blue-600 transition duration-300"
+            className="bg-blue-500 text-white p-2 rounded-xl hover:bg-blue-600 transition duration-300 transform active:scale-95"
           >
             Add Item
           </button>
@@ -346,7 +361,7 @@ const deleteAllItems = async () => {
           <button
             onClick={toggleDeleteMode}
          
-             className="bg-red-500 text-white p-2 rounded-xl hover:bg-red-600 transition duration-300"
+             className="bg-red-500 text-white p-2 rounded-xl hover:bg-red-600 transition duration-300 transform active:scale-95"
           >
             {isDeleteMode ? 'Cancel Delete' : 'Delete Preset Items'}
           </button>
@@ -391,7 +406,7 @@ const deleteAllItems = async () => {
       {/* Add Item Button */}
       <button
         onClick={addCustomPresetItem}
-        className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300 text-sm w-full"
+        className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300 text-sm w-full transform active:scale-95"
       >
         Add Item
       </button>
@@ -399,7 +414,7 @@ const deleteAllItems = async () => {
       {/* Close Button */}
       <button
         onClick={toggleModal}
-        className="bg-gray-500 text-white p-2 rounded mt-4 hover:bg-gray-600 transition duration-300 text-sm w-full"
+        className="bg-gray-500 text-white p-2 rounded mt-4 hover:bg-gray-600 transition duration-300 text-sm w-full transform active:scale-95"
       >
         Close
       </button>
@@ -459,7 +474,7 @@ const deleteAllItems = async () => {
           <button
             key={index}
             onClick={() => setActiveCategory(category)}
-            className={`rounded-md p-2 m-2 text-sm ${
+            className={`rounded-md p-2 m-2 text-sm  transform active:scale-95 ${
               activeCategory === category
                 ? "bg-blue-500 text-white"
                 : "bg-gray-200 text-black"
@@ -480,12 +495,15 @@ const deleteAllItems = async () => {
   key={item._id}
   className="relative w-full" // <-- added "relative" here
 >
-  <button
-    onClick={() => addPresetItem(item)}
-    className="rounded-md p-2 bg-blue-500 text-white hover:bg-blue-600 transition duration-300 text-sm w-full"
-  >
-    {item.name} ₱{item.price}
-  </button>
+<button
+  onClick={() => handleClick(item)}
+  disabled={isDisabled}
+  className={`rounded-md p-2 text-white text-sm w-full transform transition duration-300 active:scale-95 ${
+    isDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+  }`}
+>
+  {item.name} ₱{item.price}
+</button>
 
   {isDeleteMode && (
     <button
@@ -495,7 +513,7 @@ const deleteAllItems = async () => {
           deletePresetItem(item._id);
         }
       }}
-      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition duration-300 text-xs z-10"
+      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition duration-300 text-xs z-10 transform active:scale-95"
     >
       X
     </button>
@@ -536,7 +554,7 @@ const deleteAllItems = async () => {
           <td className="border border-gray-300 p-1 text-black">
             <button
               onClick={() => deleteItem(item._id)} // Pass _id for deletion
-              className="text-red-500 hover:text-red-700 transition duration-300 text-sm"
+              className="text-red-500 hover:text-red-700 transition duration-300 text-sm transform active:scale-95"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                 <path fillRule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clipRule="evenodd" />
@@ -573,7 +591,7 @@ const deleteAllItems = async () => {
         <div className="mt-4">
           <button 
             onClick={deleteAllItems}
-            className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition duration-300 text-sm"
+            className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition duration-300 text-sm transform active:scale-95"
           >
             Delete All Items
           </button>

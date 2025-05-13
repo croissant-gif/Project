@@ -486,16 +486,15 @@ const saveReason = async () => {
   <div className="h-[7%] p-3 bg-zinc-300 flex justify-between items-center shadow-md">
   <h1 className="font-medium text-lg text-black font-montserrat">ROOMS</h1>
   <div className="flex space-x-4">
-    <button
-      onClick={openConditionModal}
-      className="bg-blue-500 text-white p-2 rounded-xl hover:bg-blue-600 transition duration-300 font-montserrat"
-    >
-      Add Room Status
-    </button>
-
+<button
+  onClick={openConditionModal}
+  className="bg-blue-500 text-white p-2 rounded-xl hover:bg-blue-600 transition duration-200 font-montserrat transform active:scale-95"
+>
+  Add Room Status
+</button>
     <button
       onClick={() => setIsRoomModalOpen(true)}
-      className="bg-green-500 text-white p-2 rounded-xl hover:bg-green-600 transition duration-300 font-montserrat"
+      className="bg-green-500 text-white p-2 rounded-xl hover:bg-green-600 transition duration-300 font-montserrat transform active:scale-95"
     >
       Add Room
     </button>
@@ -518,14 +517,14 @@ const saveReason = async () => {
             <div className="mt-4 flex justify-end font-montserrat">
               <button
                 onClick={saveReason}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2 font-montserrat"
+                className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2 font-montserrat transform active:scale-95"
               >
                 Save
               </button>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md transition font-montserrat"
+                className="bg-red-500 text-white px-4 py-2 rounded-md transition font-montserrat transform active:scale-95"
               >
                 Cancel
               </button>
@@ -552,13 +551,13 @@ const saveReason = async () => {
       <div className="mt-4 flex justify-end">
         <button
           onClick={addNewCondition}
-          className="bg-green-500 text-white px-4 py-2 rounded-md transition mr-2 font-montserrat"
+          className="bg-green-500 text-white px-4 py-2 rounded-md transition mr-2 font-montserrat transform active:scale-95"
         >
           Add
         </button>
         <button
           onClick={closeConditionModal}
-          className="bg-red-500 text-white px-4 py-2 rounded-md transition font-montserrat"
+          className="bg-red-500 text-white px-4 py-2 rounded-md transition font-montserrat transform active:scale-95"
         >
           Cancel
         </button>
@@ -572,7 +571,7 @@ const saveReason = async () => {
             
             <button
               onClick={() => deleteCondition(condition)}  // Use the entire condition object for deletion
-              className="text-red-500 ml-2 font-montserrat"
+              className="text-red-500 ml-2 font-montserrat transform active:scale-95"
             >
               Delete
             </button>
@@ -595,13 +594,13 @@ const saveReason = async () => {
               placeholder="Enter special request..."
             ></textarea>
             <div className="mt-4 flex justify-end   font-montserrat">
-              <button onClick={saveSpecialRequest} className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2">
+              <button onClick={saveSpecialRequest} className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2 transform active:scale-95">
                 Save
               </button>
               <button
                 type="button"
                 onClick={() => setSpecialRequestModalOpen(false)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md transition"
+                className="bg-red-500 text-white px-4 py-2 rounded-md transition transform active:scale-95"
               >
                 Cancel
               </button>
@@ -646,13 +645,13 @@ const saveReason = async () => {
                 <option value="Ocean front">Ocean front</option>
               </select>
               <div className="mt-4 flex justify-end">
-                <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition mr-2">
+                <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition mr-2 transform active:scale-95">
                   Add
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsRoomModalOpen(false)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition"
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition transform active:scale-95"
                 >
                   Cancel
                 </button>
@@ -674,13 +673,13 @@ const saveReason = async () => {
               placeholder="Enter special request..."
             ></textarea>
             <div className="mt-4 flex justify-end">
-              <button onClick={saveSpecialRequest} className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2 font-montserrat">
+              <button onClick={saveSpecialRequest} className="bg-blue-500 text-white px-4 py-2 rounded-md transition mr-2 font-montserrat transform active:scale-95">
                 Save
               </button>
               <button
                 type="button"
                 onClick={() => setSpecialRequestModalOpen(false)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md transition"
+                className="bg-red-500 text-white px-4 py-2 rounded-md transition transform active:scale-95"
               >
                 Cancel
               </button>
