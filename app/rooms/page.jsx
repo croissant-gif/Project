@@ -535,7 +535,7 @@ const saveReason = async () => {
       )}
 {/*============================================================================================================================================================================================================================= */}
 {/* Modal for Adding New Condition */}
-{isConditionModalOpen &&  !selectedRoom && (
+{isConditionModalOpen &&   (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
     <div className="bg-white p-6 rounded-lg shadow-lg">
       <h2 className="text-lg font-semibold mb-4 text-black font-montserrat">Add New Status</h2>
@@ -584,7 +584,7 @@ const saveReason = async () => {
 )}
  {/*============================================================================================================================================================================================================================= 
        {/* Special Request Modal */}
-       {specialRequestModalOpen &&  !selectedRoom && (
+       {specialRequestModalOpen &&   (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold mb-4 text-black font-montserrat">Special Request</h2>
@@ -611,7 +611,7 @@ const saveReason = async () => {
       )}
 
       {/* Modal for Adding Room */}
-      {isRoomModalOpen &&  !selectedRoom  (
+      {isRoomModalOpen &&   (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50  z-20 font-montserrat">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold mb-4 text-black">Add New Room</h2>
@@ -663,7 +663,7 @@ const saveReason = async () => {
       )}
 
 
-{specialRequestModalOpen &&  !selectedRoom  && (
+{specialRequestModalOpen &&   (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold mb-4 text-black">Special Request</h2>
@@ -832,6 +832,7 @@ const saveReason = async () => {
   ))}
 </tbody>
         </table>
+ 
 {/*============================================================================================================================================================================================================*/}
       </div>   
    
@@ -841,3 +842,4 @@ const saveReason = async () => {
 };
 
 export default RoomSelection;
+
