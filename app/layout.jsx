@@ -40,9 +40,9 @@ export default function RootLayout({ children }) {
   
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}  ${montserrat.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable}  ${montserrat.variable} antialiased `} >
         
-        <main className="flex bg-white w-full">
+        <main className="flex bg-white  ">
           {/* Conditionally render Sidebar based on the pathname */}
           {!isLoginPage && !isCreatePage && <Sidebar />}
           
