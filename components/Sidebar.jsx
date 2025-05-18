@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';  
 
 export const Sidebar = () => {
   const [fullName, setFullName] = useState('');
@@ -49,12 +50,19 @@ useEffect(() => {
   return (
       <section className="  flex h-screen   font-montserrat">
     
-      <div className={`bg-gradient-to-b from-blue-500 to-blue-300  shadow-lg ${isCollapsed ? 'w-20 ' : 'w-60   '}  transform transition-width duration-300 ease-in-out `}>
+      <div className={`bg-gradient-to-b from-blue-500  to-customgreen  shadow-lg ${isCollapsed ? 'w-20 ' : 'w-60   '}  transform transition-width duration-300 ease-in-out `}>
          {/* Title at Top */}
          <div className={`px-3 py-2 w-full transition-all duration-300 flex justify-center ${isCollapsed ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-auto'}`}>
-          <h1 className="text-white font-montserrat text-sm text-center">
-            HOUSEKEEPING MANAGEMENT SYSTEM
-          </h1>
+             <div className="  justify-center  ">
+                      <Image
+                        src="/logowhite.png"    
+                        alt="App Logo"
+                        width={100}        
+                        height={100}
+                        priority        
+                      />
+                    </div>
+        
         </div>
       <div className="px-4 py-5">
         

@@ -524,7 +524,7 @@ const deleteAllItems = async () => {
     </div>
 {/*==========================================================================================================================================================================================================*/}       
     {/* Inventory Table */}
-{/* Inventory Table */}
+ 
 <table className="table-auto border border-gray-300 w-full bg-white shadow-md rounded-md text-sm">
   <thead>
     <tr className="bg-gray-200 text-black">

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';  
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -10,15 +11,12 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Check if the user is logged in when the component mounts
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
-      // If logged in, redirect to the dashboard
       router.push('/rooms');
     }
   }, [router]);
-  
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -37,12 +35,10 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-       
-       const { name, lastName } = data;
-localStorage.setItem("username", username);  
-localStorage.setItem("name", name);
-localStorage.setItem("lastName", lastName);
- 
+        const { name, lastName } = data;
+        localStorage.setItem("username", username);  
+        localStorage.setItem("name", name);
+        localStorage.setItem("lastName", lastName);
         router.push("/rooms");
       } else {
         setMessage(data.message || "An error occurred");
@@ -60,11 +56,27 @@ localStorage.setItem("lastName", lastName);
 
   return (
     <section className="w-full font-montserrat">
-      <section className="flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-300 to-blue-600">
+      <section className="flex justify-center items-center min-h-screen bg-gradient-to-r  from-customgreen to-customBlue">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96 max-w-sm">
-          <h2 className="text-3xl font-semibold text-center  text-black mb-6">Login</h2>
+          
+  
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/logo.png"    
+              alt="App Logo"
+              width={200}        
+              height={200}
+              priority        
+            />
+          </div>
 
-          {message && <div className="mb-4 text-center text-lg font-semibold text-red-600">{message}</div>}
+          <h2 className="text-3xl font-semibold text-center text-black mb-6">Login</h2>
+
+          {message && (
+            <div className="mb-4 text-center text-lg font-semibold text-red-600">
+              {message}
+            </div>
+          )}
           
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -73,7 +85,7 @@ localStorage.setItem("lastName", lastName);
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className=" text-black w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-black w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -82,7 +94,7 @@ localStorage.setItem("lastName", lastName);
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className=" text-black w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-black w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="flex justify-center">
@@ -101,7 +113,7 @@ localStorage.setItem("lastName", lastName);
               onClick={handleCreateAccount}
               className="text-blue-600 hover:underline"
             >
-             Create Account
+              Create Account
             </button>
           </div>
         </div>

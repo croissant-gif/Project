@@ -54,7 +54,7 @@ const AddAccount = () => {
   };
   return (
     <section className="w-full font-montserrat">
-      <section className="flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-300 to-blue-600">
+       <section className="flex justify-center items-center min-h-screen bg-gradient-to-r  from-customgreen to-customBlue">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96 max-w-sm">
           <h2 className="text-3xl font-semibold text-center  text-black mb-6">Add Account</h2>
           
