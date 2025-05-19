@@ -8,17 +8,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        primary: "#2D3748",
+        secondary: "#A0AEC0",
+        main: "#1195FF",
         background: "var(--background)",
         foreground: "var(--foreground)",
-                customBlue: '#279FD4',
-                customgreen: '#70C0BD', 
+        customBlue: "#279FD4",
+        customgreen: "#70C0BD",
       },
       fontFamily: {
         body: ["Lato"],
-        sans: ['var(--font-geist-sans)', 'sans-serif'],
-        mono: ['var(--font-geist-mono)', 'monospace'],
-         roboto: ['var(--font-roboto)', 'sans-serif'],
-         montserrat: ['var(--font-montserrat)', 'sans-serif'],   
+        sans: ["var(--font-geist-sans)", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
+        roboto: ["var(--font-roboto)", "sans-serif"],
+        montserrat: ["var(--font-montserrat)", "sans-serif"],
       },
     },
   },
