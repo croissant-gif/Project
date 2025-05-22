@@ -1,6 +1,6 @@
 import dbConnect from '../../../../utils/dbConnect';
 import Inventory from '../../../../models/Inventory';
-import mongoose from 'mongoose'; // Ensure mongoose is imported
+import mongoose from 'mongoose'; 
 
  
 dbConnect();
@@ -15,11 +15,11 @@ export async function GET(request) {
   }
 
   try {
-    // Attempt to find the inventory for the roomId
+ 
     let inventory = await Inventory.findOne({ roomId });
 
     if (!inventory) {
-      // If no inventory found, return a message instead of creating a new document
+      
       return new Response('Inventory not found for this room', { status: 404 });
     }
 
@@ -37,34 +37,33 @@ export async function POST(request) {
   const body = await request.json();
   try {
     const { roomId, item } = body;
-
-    // Ensure the item has necessary properties
+ 
     if (!item || !item.name || !item.quantity) {
       return new Response('Item must have a name and quantity', { status: 400 });
     }
 
-    // Check if the room exists and if the item already exists in the inventory
+ 
     const inventory = await Inventory.findOne({ roomId });
 
     if (inventory) {
-      // Check if the item already exists in the inventory
+   
       const existingItemIndex = inventory.inventory.findIndex(
         (existingItem) => existingItem.name === item.name
       );
 
       if (existingItemIndex !== -1) {
-        // Item exists, update its quantity
+        
         inventory.inventory[existingItemIndex].quantity += item.quantity;
         await inventory.save();
       } else {
-        // Item does not exist, add a new item
+        
         inventory.inventory.push(item);
         await inventory.save();
       }
 
       return new Response(JSON.stringify(inventory.inventory), { status: 201 });
     } else {
-      // No inventory found for this room, create a new one
+  
       const newInventory = new Inventory({
         roomId,
         inventory: [item],
@@ -87,12 +86,12 @@ export async function DELETE(request) {
   try {
     const { roomId, itemId } = body;
 
-    // Ensure that roomId is present
+ 
     if (!roomId) {
       return new Response('Room ID is required', { status: 400 });
     }
 
-    // If itemId is provided, delete only that item
+   
     if (itemId) {
       await Inventory.updateOne(
         { roomId },  
@@ -103,9 +102,9 @@ export async function DELETE(request) {
 
     
     
-    await Inventory.deleteOne({ roomId }); // Delete the inventory document associated with the roomId
+    await Inventory.deleteOne({ roomId });  
 
-    return new Response(null, { status: 204 }); // No content on successful deletion of the entire inventory
+    return new Response(null, { status: 204 });  
   } catch (error) {
     console.error('Error deleting item(s) or inventory:', error);
     return new Response('Failed to delete item(s) or inventory', { status: 500 });

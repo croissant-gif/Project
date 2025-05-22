@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 export async function GET() {
   let ip = null;
 
-  // Try to get the local IP from the wireless LAN adapter
+  
   try {
     
     const output = execSync('ipconfig').toString();

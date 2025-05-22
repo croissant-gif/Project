@@ -8,14 +8,13 @@ const AddAccount = () => {
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');  // State to store success/error messages
-  const [loading, setLoading] = useState(false);  // State to track if the request is in progress
-  const router = useRouter();
+  const [message, setMessage] = useState('');   
+  const [loading, setLoading] = useState(false);   
 
   const addAccount = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');  // Reset message before submitting
+    setMessage(''); 
   
     const newAccount = { name, lastName, username, password };
   
@@ -27,26 +26,25 @@ const AddAccount = () => {
         },
         body: JSON.stringify(newAccount),
       });
-  
-      // Parse the response data
+   
       const addedAccount = await response.json();
   
       if (response.ok) {
         setMessage('Account added successfully!');
-        // Reset the form fields
+        
         setName('');
         setLastName('');
         setUsername('');
         setPassword('');
       } else {
-        // Handle errors from the backend
+     
         setMessage(`Error: ${addedAccount.message || 'An error occurred'}`);
       }
     } catch (error) {
-      // Handle network errors or if the server is unreachable
+     
       setMessage('Error: Could not reach the server. Please try again later.');
     } finally {
-      setLoading(false);  // Reset loading state after the request is finished
+      setLoading(false);   
     }
   };
   const handleLoginAccount = () => {
@@ -117,7 +115,7 @@ const AddAccount = () => {
             </div>
           </form>
 
-          {/* Optional Link to a Login page or other actions */}
+          
           <div className="mt-4 text-center">
           <button
               onClick={handleLoginAccount}

@@ -15,7 +15,7 @@ export async function GET() {
   }
 }
 
-// POST handler to add a new condition
+ 
 export async function POST(request) {
   const body = await request.json();
   const { newCondition } = body;
@@ -46,13 +46,13 @@ export async function POST(request) {
 // DELETE handler to delete a condition
 export async function DELETE(request) {
   try {
-    const { condition } = await request.json(); // Get the condition name from the request body
+    const { condition } = await request.json();  
 
     if (!condition) {
       return new Response('Condition name is required', { status: 400 });
     }
 
-    // Find and delete the condition from MongoDB based on the name
+ 
     const deletedCondition = await Condition.deleteOne({ name: condition });
 
     if (deletedCondition.deletedCount === 1) {

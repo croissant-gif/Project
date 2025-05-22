@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';  // Import useRouter from next/navigation
+import { useRouter } from 'next/navigation';  
 import localFont from 'next/font/local';
 import './globals.css';
 import { Sidebar } from '@/components/Sidebar';
@@ -21,22 +21,22 @@ const geistMono = localFont({
 
 const montserrat = Montserrat({
   subsets: ['latin'],
-  weight: ['400', '600', '700'], // choose weights you want
+  weight: ['400', '600', '700'],  
   variable: '--font-montserrat',
 });
 
 export default function RootLayout({ children }) {
-  const router = useRouter();  // Initialize the router
-  const pathname = usePathname();  // Get the current pathname
+  const router = useRouter();  
+  const pathname = usePathname();   
 
   useEffect(() => {
-    // Redirect to '/rooms' if the current pathname is the root path (or any condition you'd like)
+     
     if (pathname === '/') {
-      router.push('/rooms');  // Programmatically navigate to '/rooms'
+      router.push('/rooms');  
     }
-  }, [pathname, router]);  // Depend on pathname to trigger effect on path changes
-  const isLoginPage = pathname === '/login';  // Check if the current path is the login page
-  const isCreatePage = pathname === '/create';  // Check if the current path is the create page
+  }, [pathname, router]);   
+  const isLoginPage = pathname === '/login';   
+  const isCreatePage = pathname === '/create';   
   
   return (
     <html lang="en">

@@ -51,8 +51,7 @@ export async function POST(request) {
     return new Response('Failed to create room', { status: 500 });
   }
 }
-
-// DELETE handler to delete a room
+ 
 export async function DELETE(request) {
   const body = await request.json();
   const { id } = body;
@@ -100,7 +99,7 @@ export async function PUT(request) {
   }
 }
 
-// PATCH handler to update assigned employee
+ 
 
 export async function PATCH(request) {
   const body = await request.json();

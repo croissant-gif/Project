@@ -18,6 +18,7 @@ const [selectedCategory, setSelectedCategory] = useState('');
   const categories = ["bathroom", "living-room", "mini-bar"];
   const router = useRouter();
   const [message, setMessage] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
 
   // To store dynamically added preset items
@@ -42,15 +43,15 @@ const [selectedCategory, setSelectedCategory] = useState('');
           throw new Error('Failed to fetch preset items');
         }
         const data = await response.json();
-        setDynamicPresetItems(data); // Update state with the fetched data
+        setDynamicPresetItems(data);  
       } catch (err) {
-        setError(err.message); // Handle any errors
+        setError(err.message);  
       } finally {
-        setLoading(false); // Set loading to false after the fetch completes
+        setLoading(false); 
       }
     };
 
-    fetchPresetItems(); // Call the function to fetch the items
+    fetchPresetItems(); 
   }, []);  
 
  
@@ -123,17 +124,17 @@ useEffect(() => {
 //=============================================================================================================================================================================================================================
 const deletePresetItem = async (id) => {
   try {
-    // Send DELETE request to backend to remove the item from MongoDB
+   
     const response = await fetch('/api/todos/presetitem', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id }), // Send the id of the item to delete
+      body: JSON.stringify({ id }),  
     });
 
     if (response.ok) {
-      // Remove the item from the state if the deletion is successful
+ 
       const updatedPresetItems = dynamicPresetItems.filter(item => item._id !== id);
       setDynamicPresetItems(updatedPresetItems);
       localStorage.setItem('dynamicPresetItems', JSON.stringify(updatedPresetItems));
@@ -161,9 +162,9 @@ const handleClick = async (item) => {
   setIsDisabled(true);
 
   try {
-    await addPresetItem(item); // Your full async logic stays the same
+    await addPresetItem(item);  
   } finally {
-    // Re-enable button after 500ms
+    
     setTimeout(() => setIsDisabled(false), 50);
   }
 };
@@ -172,12 +173,12 @@ const handleClick = async (item) => {
     const updatedInventories = [...inventories];
     const currentRoomInventory = updatedInventories[selectedRoom - 1] || [];
     const existingItemIndex = currentRoomInventory.findIndex(existingItem => existingItem.name === item.name);
-    // If item exists, increase its quantity and update the total price
+ 
     if (existingItemIndex !== -1) {
       currentRoomInventory[existingItemIndex].quantity += 1;
       currentRoomInventory[existingItemIndex].totalPrice = currentRoomInventory[existingItemIndex].quantity * currentRoomInventory[existingItemIndex].price; 
     } else {
-      currentRoomInventory.push({ ...item, quantity: 1, totalPrice: item.price });
+      currentRoomInventory.push({ ...item, quantity: 1, totalPrice: item.price ? item.price : 0 });
     }
     updatedInventories[selectedRoom - 1] = currentRoomInventory;
     setInventories(updatedInventories);
@@ -211,48 +212,51 @@ const handleClick = async (item) => {
   
 
 //=============================================================================================================================================================================================================================
+const addCustomPresetItem = async () => {
+  if (customPresetName && selectedCategory) {
+    setIsAdding(true); // Start loading
+    const parsedPrice = parseFloat(customPresetPrice);
+    const finalPrice = isNaN(parsedPrice) ? 0 : parsedPrice;
 
-  // Function to handle adding a new preset item dynamically
-  const addCustomPresetItem = async () => {
-    if (customPresetName && customPresetPrice && selectedCategory) {
-      const newPresetItem = {
-        name: `${customPresetName}`,
-        price: parseFloat(customPresetPrice),
-        quantity: 1,
-        category: selectedCategory,
-      };
-  
-      try {
-        // Send the newPresetItem to the backend to save it in MongoDB
-        const response = await fetch('/api/todos/presetitem', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newPresetItem),
-        });
-  
-        const result = await response.json();
-  
-        if (response.ok) {
-          // Update the local state if the item was successfully added
-          setDynamicPresetItems((prevItems) => [...prevItems, result]);
-          setCustomPresetName('');
-          setCustomPresetPrice('');
-          setSelectedCategory('');
-          setIsModalOpen(false);
-        } else {
-          alert(result.message || 'Failed to save the item.');
-        }
-      } catch (error) {
-        console.error('Error adding preset item:', error);
-        alert('Failed to save the item.');
+    const newPresetItem = {
+      name: customPresetName,
+      price: finalPrice,
+      quantity: 1,
+      category: selectedCategory,
+    };
+
+    try {
+      const response = await fetch('/api/todos/presetitem', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPresetItem),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setDynamicPresetItems((prevItems) => [...prevItems, result]);
+        setCustomPresetName('');
+        setCustomPresetPrice('');
+        setSelectedCategory('');
+        setIsModalOpen(false);
+      } else {
+        alert(result.message || 'Failed to save the item.');
       }
-    } else {
-      alert('Please provide a name, price, and select a category for the custom preset item.');
+    } catch (error) {
+      console.error('Error adding preset item:', error);
+      alert('Failed to save the item.');
+    } finally {
+      setIsAdding(false); // Stop loading
     }
-  };
-  
+  } else {
+    alert('Please provide a name and select a category for the custom preset item.');
+  }
+};
+
+
 //=============================================================================================================================================================================================================================
 
   const toggleModal = () => {
@@ -269,14 +273,14 @@ const deleteItem = async (itemId) => {
       return;
     }
 
-    // Find the item in the inventories based on the itemId
+    
     const itemIndex = updatedInventories[selectedRoom - 1].findIndex(item => item._id === itemId);
     if (itemIndex === -1) {
       console.error('Item not found');
       return;
     }
 
-    // Remove the item from the inventories array
+   
     updatedInventories[selectedRoom - 1].splice(itemIndex, 1);
     setInventories(updatedInventories);
     localStorage.setItem('inventories', JSON.stringify(updatedInventories));
@@ -289,7 +293,7 @@ const deleteItem = async (itemId) => {
       });
       if (!response.ok) {
         console.error('Failed to delete item from the database');
-        // Revert the item removal in case of failure
+ 
         updatedInventories[selectedRoom - 1].splice(itemIndex, 0, updatedInventories[selectedRoom - 1][itemIndex]);
         setInventories(updatedInventories);
       } else {
@@ -404,12 +408,15 @@ const deleteAllItems = async () => {
       </select>
       
       {/* Add Item Button */}
-      <button
-        onClick={addCustomPresetItem}
-        className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300 text-sm w-full transform active:scale-95"
-      >
-        Add Item
-      </button>
+    <button
+  onClick={addCustomPresetItem}
+  disabled={isAdding}
+  className={`${
+    isAdding ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'
+  } text-white p-2 rounded transition duration-300 text-sm w-full transform active:scale-95`}
+>
+  {isAdding ? 'Adding...' : 'Add Item'}
+</button>
       
       {/* Close Button */}
       <button
@@ -425,7 +432,7 @@ const deleteAllItems = async () => {
    </div>
 {/*=============================================================================================================================================================================================================================*/}
      
-  {/* Rest of the page content */}
+ 
 <div className="container mx-auto p-6">
   <div className="mb-6 flex flex-col md:flex-row items-center justify-center gap-4">
     
@@ -487,40 +494,36 @@ const deleteAllItems = async () => {
         {/* Preset Items Section */}
         <div className="mb-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 w-full">
       {/* Render dynamic preset items based on active category */}
-      {dynamicPresetItems
-        .filter((item) => item.category === activeCategory)
-        .map((item) => (
+  {dynamicPresetItems
+  .filter((item) => item.category === activeCategory)
+  .map((item) => (
+    <div key={item._id} className="relative w-full">
+      <button
+        onClick={() => handleClick(item)}
+        disabled={isDisabled}
+        className={`rounded-md p-2 text-white text-sm w-full transform transition duration-300 active:scale-95 ${
+          isDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+        }`}
+      >
+        {item.name} {item.price ? `₱${parseFloat(item.price).toFixed(2)}` : ''}
+      </button>
+      
+      {isDeleteMode && (
+        <button
+          onClick={() => {
+            const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+            if (confirmDelete) {
+              deletePresetItem(item._id);
+            }
+          }}
+          className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition duration-300 text-xs z-10 transform active:scale-95"
+        >
+          X
+        </button>
+      )}
+    </div>
+))}
 
-        <div
-  key={item._id}
-  className="relative w-full" // <-- added "relative" here
->
-<button
-  onClick={() => handleClick(item)}
-  disabled={isDisabled}
-  className={`rounded-md p-2 text-white text-sm w-full transform transition duration-300 active:scale-95 ${
-    isDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
-  }`}
->
-  {item.name} ₱{item.price}
-</button>
-
-  {isDeleteMode && (
-    <button
-      onClick={() => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this item?");
-        if (confirmDelete) {
-          deletePresetItem(item._id);
-        }
-      }}
-      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition duration-300 text-xs z-10 transform active:scale-95"
-    >
-      X
-    </button>
-  )}
-</div>
-
-        ))}
     </div>
 {/*==========================================================================================================================================================================================================*/}       
     {/* Inventory Table */}
@@ -543,17 +546,19 @@ const deleteAllItems = async () => {
     </tr>
   ) : (
     currentItems
-      .filter((item) => item.category === activeCategory) // Filter items by active category
+      .filter((item) => item.category === activeCategory) 
       .map((item, index) => (
-        <tr key={item._id}> {/* Use item._id here instead of index */}
+        <tr key={item._id}>  
           <td className="border border-gray-300 p-1 text-black">{item.name}</td>
           <td className="border border-gray-300 p-1 text-black">{item.quantity}</td>
-          <td className="border border-gray-300 p-1 text-black">
-            {item.totalPrice ? `₱${item.totalPrice.toFixed(2)}` : "N/A"}
-          </td>
+       <td className="border border-gray-300 p-1 text-black">
+  {typeof item.totalPrice === 'number' && item.totalPrice > 0
+    ? `₱${item.totalPrice.toFixed(2)}`
+    : ''}
+</td>
           <td className="border border-gray-300 p-1 text-black">
             <button
-              onClick={() => deleteItem(item._id)} // Pass _id for deletion
+              onClick={() => deleteItem(item._id)} 
               className="text-red-500 hover:text-red-700 transition duration-300 text-sm transform active:scale-95"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">

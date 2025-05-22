@@ -20,8 +20,7 @@ export async function POST(req) {
     if (!isMatch) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 400 });
     }
-
-    // Convert to plain object and remove password before sending
+ 
     const accountData = account.toObject();
     delete accountData.password;
 

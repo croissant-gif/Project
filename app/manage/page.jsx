@@ -25,7 +25,7 @@ export default function ManageAccount() {
 
       if (res.ok) {
         setUser(data);
-        setFormData(data); // For edit fields
+        setFormData(data); 
       } else {
         setError(data.message || "Failed to load user data.");
       }
@@ -34,17 +34,17 @@ export default function ManageAccount() {
     fetchUser();
   }, [username]);
 
-  // Handle form input changes
+ 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle password input change
+ 
   const handlePasswordChange = (e) => {
     setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
   };
 
-  // Submit updates to user info
+ 
  const handleUpdate = async () => {
   setError('');
   setMessage('');
@@ -73,9 +73,9 @@ export default function ManageAccount() {
   }
 };
 
-  // Submit password update
+  
  const handlePasswordUpdate = async () => {
-  // Clear previous messages
+ 
   setError('');
   setMessage('');
 
@@ -93,11 +93,11 @@ export default function ManageAccount() {
 
   if (res.ok) {
     setMessage('Password updated successfully.');
-    setError(''); // Clear any previous error
-    setPasswordForm({ currentPassword: '', newPassword: '' }); // Optional: reset inputs
+    setError('');  
+    setPasswordForm({ currentPassword: '', newPassword: '' });  
   } else {
     setError(data.message || 'Password update failed.');
-    setMessage(''); // Clear success message
+    setMessage(''); 
   }
 };
   // Delete account
@@ -133,7 +133,7 @@ export default function ManageAccount() {
 
       {/* Update Info Form */}
       <div className="space-y-6">
-        {/* Name */}
+       
         <div>
           <label htmlFor="name" className="block text-sm font-semibold text-gray-700">First Name</label>
           <input
@@ -144,9 +144,7 @@ export default function ManageAccount() {
             onChange={handleChange}
             className="w-full p-2 border rounded mt-1"
           />
-        </div>
-
-        {/* Last Name */}
+        </div> 
         <div>
           <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700">Last Name</label>
           <input
@@ -158,8 +156,7 @@ export default function ManageAccount() {
             className="w-full p-2 border rounded mt-1"
           />
         </div>
-
-        {/* Username */}
+ 
         <div>
           <label htmlFor="username" className="block text-sm font-semibold text-gray-700">Username</label>
           <input
@@ -180,12 +177,12 @@ export default function ManageAccount() {
         </button>
       </div>
 
-      {/* Password Change - Horizontal Layout */}
+ 
       <div className="mt-6 space-y-6">
         <h2 className="text-lg font-semibold">Change Password</h2>
         
         <div className="flex space-x-4">
-          {/* Current Password */}
+     
           <div className="w-1/2">
             <label htmlFor="currentPassword" className="block text-sm font-semibold text-gray-700">Current Password</label>
             <input
@@ -199,7 +196,7 @@ export default function ManageAccount() {
             />
           </div>
 
-          {/* New Password */}
+      
           <div className="w-1/2">
             <label htmlFor="newPassword" className="block text-sm font-semibold text-gray-700">New Password</label>
             <input
@@ -222,7 +219,7 @@ export default function ManageAccount() {
         </button>
       </div>
 
-      {/* Delete Account */}
+ 
       <div className="mt-6">
         <button
           onClick={handleDelete}

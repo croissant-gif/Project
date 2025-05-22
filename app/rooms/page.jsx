@@ -405,7 +405,7 @@ const deleteRoom = async (roomId) => {
       body: JSON.stringify({ id: roomToDelete._id }),
     });
 
-    // Remove room from local state
+ 
     const updatedRooms = rooms.filter(room => room._id !== roomId);
     setRooms(updatedRooms);
 

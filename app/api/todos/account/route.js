@@ -3,7 +3,7 @@ import Account from '../../../../models/Account';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 
-// CREATE account (POST)
+ 
 export async function POST(req) {
   await dbConnect();
   const { name, lastName, username, password } = await req.json();
@@ -24,8 +24,7 @@ export async function POST(req) {
     return NextResponse.json({ message: 'Error creating account', error: error.message }, { status: 500 });
   }
 }
-
-// READ account info (GET)
+ 
 export async function GET(req) {
   await dbConnect();
   const { searchParams } = new URL(req.url);
@@ -43,7 +42,7 @@ export async function GET(req) {
   }
 }
 
-// UPDATE account info (PUT)
+ 
 export async function PUT(req) {
   await dbConnect();
   const { currentUsername, newUsername, name, lastName } = await req.json();
@@ -73,8 +72,7 @@ export async function PUT(req) {
     return NextResponse.json({ message: 'Error updating account', error: error.message }, { status: 500 });
   }
 }
-
-// UPDATE password only (PATCH)
+ 
 export async function PATCH(req) {
   await dbConnect();
   const { username, currentPassword, newPassword } = await req.json();
@@ -100,7 +98,7 @@ export async function PATCH(req) {
   }
 }
 
-// DELETE account (DELETE)
+ 
 export async function DELETE(req) {
   await dbConnect();
   const { username } = await req.json();

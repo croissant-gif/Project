@@ -88,26 +88,26 @@ const Employees = () => {
 
   const openDetailModal = (employee) => {
     setSelectedEmployee(employee);
-    setIsDetailModalOpen(true);  // Open detail modal
+    setIsDetailModalOpen(true);  
   };
   
   const closeDetailModal = () => {
     setSelectedEmployee(null);
-    setIsDetailModalOpen(false);  // Close detail modal
+    setIsDetailModalOpen(false);  
   };
   
-  // Open and close functions for the time modal
+ 
   const openTimeModal = (employee) => {
     setSelectedEmployee(employee);
     setTempStartTime(employee.schedule ? employee.schedule.split(' - ')[0] : '');
     setTempEndTime(employee.schedule ? employee.schedule.split(' - ')[1] : '');
-    setIsTimeModalOpen(true);  // Open time modal
+    setIsTimeModalOpen(true);  
   };
   
   const closeTimeModal = () => {
     setTempStartTime('');
     setTempEndTime('');
-    setIsTimeModalOpen(false);  // Close time modal
+    setIsTimeModalOpen(false);  
   };
 
   const saveShift = async () => {
@@ -118,7 +118,7 @@ const Employees = () => {
     setEmployees(updatedEmployees);
     setIsTimeModalOpen(false);
 
-    // Optionally, you can also update the employee in the backend
+ 
     try {
       const response = await fetch('/api/todos/employee', {
         method: 'PATCH',
@@ -277,7 +277,7 @@ const Employees = () => {
 )}
 
       {/* Employee Table */}
-    {/* Employees Table with consistent styling */}
+     
 <div className="overflow-x-auto max-h-[650px] overflow-y-auto font-montserrat">
   <table className="table-auto w-full rounded-2xl m-6 bg-white shadow-lg font-montserrat">
     <thead className="w-full h-12 bg-slate-100">
