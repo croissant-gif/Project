@@ -1,6 +1,6 @@
 
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const AddAccount = () => {
@@ -9,8 +9,37 @@ const AddAccount = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');   
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);   
     const router = useRouter();
+
+  useEffect(() => {
+    const username = localStorage.getItem("username");
+
+    if (!username) {
+      setMessage("You need to log in first.");
+      router.push("/login");
+      return;
+    }
+  
+    const fetchPresetItems = async () => {
+      try {
+        const response = await fetch('/api/todos/presetitem');
+        if (!response.ok) {
+          throw new Error('Failed to fetch preset items');
+        }
+        const data = await response.json();
+        setDynamicPresetItems(data);  
+      } catch (err) {
+        setError(err.message);  
+      } finally {
+        setLoading(false); 
+      }
+    };
+
+    fetchPresetItems(); 
+  }, []); 
+
 
   const addAccount = async (e) => {
     e.preventDefault();

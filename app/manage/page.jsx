@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+ 
 
 export default function ManageAccount() {
   const [user, setUser] = useState(null);
+  const [showPasswords, setShowPasswords] = useState({ current: false, new: false });
+
   const [formData, setFormData] = useState({});
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '' });
   const [message, setMessage] = useState('');
@@ -34,6 +38,9 @@ export default function ManageAccount() {
     fetchUser();
   }, [username]);
 
+  const handleCreateAccount = () => {
+    router.push('/create');
+  }
  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -100,27 +107,7 @@ export default function ManageAccount() {
     setMessage(''); 
   }
 };
-  // Delete account
-  const handleDelete = async () => {
-    const confirm = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
-
-    if (!confirm) return;
-
-    const res = await fetch('/api/todos/account', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username }),
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      localStorage.clear();
-      router.push('/login');
-    } else {
-      setError(data.message || 'Failed to delete account.');
-    }
-  };
+ 
 
   if (!user) return <p className="p-4">Loading...</p>;
 
@@ -181,35 +168,48 @@ export default function ManageAccount() {
       <div className="mt-6 space-y-6">
         <h2 className="text-lg font-semibold">Change Password</h2>
         
-        <div className="flex space-x-4">
-     
-          <div className="w-1/2">
-            <label htmlFor="currentPassword" className="block text-sm font-semibold text-gray-700">Current Password</label>
-            <input
-              name="currentPassword"
-              type="password"
-              id="currentPassword"
-              placeholder="Enter your current password"
-              value={passwordForm.currentPassword}
-              onChange={handlePasswordChange}
-              className="w-full p-2 border rounded mt-1"
-            />
-          </div>
+    <div className="flex space-x-4">
+  {/* Current Password */}
+  <div className="w-1/2 relative">
+    <label htmlFor="currentPassword" className="block text-sm font-semibold text-gray-700">Current Password</label>
+    <input
+      name="currentPassword"
+      type={showPasswords.current ? "text" : "password"}
+      id="currentPassword"
+      placeholder="Enter your current password"
+      value={passwordForm.currentPassword}
+      onChange={handlePasswordChange}
+      className="w-full p-2 pr-10 border rounded mt-1"
+    />
+    <span
+      onClick={() => setShowPasswords(prev => ({ ...prev, current: !prev.current }))}
+      className="absolute right-3 top-9 cursor-pointer text-gray-500 select-none"
+    >
+      {showPasswords.current ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+    </span>
+  </div>
 
-      
-          <div className="w-1/2">
-            <label htmlFor="newPassword" className="block text-sm font-semibold text-gray-700">New Password</label>
-            <input
-              name="newPassword"
-              type="password"
-              id="newPassword"
-              placeholder="Enter your new password"
-              value={passwordForm.newPassword}
-              onChange={handlePasswordChange}
-              className="w-full p-2 border rounded mt-1"
-            />
-          </div>
-        </div>
+   
+  <div className="w-1/2 relative">
+    <label htmlFor="newPassword" className="block text-sm font-semibold text-gray-700">New Password</label>
+    <input
+      name="newPassword"
+      type={showPasswords.new ? "text" : "password"}
+      id="newPassword"
+      placeholder="Enter your new password"
+      value={passwordForm.newPassword}
+      onChange={handlePasswordChange}
+      className="w-full p-2 pr-10 border rounded mt-1"
+    />
+    <span
+      onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
+      className="absolute right-3 top-9 cursor-pointer text-gray-500 select-none"
+    >
+      {showPasswords.new ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+    </span>
+  </div>
+</div>
+
 
         <button
           onClick={handlePasswordUpdate}
@@ -221,12 +221,13 @@ export default function ManageAccount() {
 
  
       <div className="mt-6">
-        <button
-          onClick={handleDelete}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          Delete Account
-        </button>
+        
+            <button
+              onClick={handleCreateAccount}
+              className="text-blue-600 hover:underline"
+            >
+              Create new account
+            </button>
       </div>
     </div>
   );
