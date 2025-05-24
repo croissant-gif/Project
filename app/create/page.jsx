@@ -2,6 +2,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const AddAccount = () => {
   const [name, setName] = useState('');
@@ -11,6 +12,7 @@ const AddAccount = () => {
   const [message, setMessage] = useState('');   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);   
+    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
 
   useEffect(() => {
@@ -127,16 +129,21 @@ const AddAccount = () => {
                 required
               />
             </div>
-            <div>
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="text-black w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
+               <div className="relative">
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="text-black w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                          />
+                       <span
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3 cursor-pointer text-gray-500 select-none"
+            >
+              {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </span> 
+                        </div>
             <div className="flex justify-center">
               <button
                 type="submit"
