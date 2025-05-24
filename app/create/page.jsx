@@ -162,7 +162,7 @@ const AddAccount = () => {
               onClick={handleLoginAccount}
               className="text-blue-600 hover:underline"
             >
-              Go to Login page
+              Go back
             </button>
           </div>
         </div>
