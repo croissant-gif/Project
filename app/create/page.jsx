@@ -1,5 +1,5 @@
-'use client';
 
+'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -10,6 +10,7 @@ const AddAccount = () => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');   
   const [loading, setLoading] = useState(false);   
+    const router = useRouter();
 
   const addAccount = async (e) => {
     e.preventDefault();
@@ -17,6 +18,7 @@ const AddAccount = () => {
     setMessage(''); 
   
     const newAccount = { name, lastName, username, password };
+    
   
     try {
       const response = await fetch('/api/todos/account', {
@@ -47,6 +49,8 @@ const AddAccount = () => {
       setLoading(false);   
     }
   };
+  
+  
   const handleLoginAccount = () => {
     router.push("/login");
   };
@@ -118,6 +122,7 @@ const AddAccount = () => {
           
           <div className="mt-4 text-center">
           <button
+          
               onClick={handleLoginAccount}
               className="text-blue-600 hover:underline"
             >

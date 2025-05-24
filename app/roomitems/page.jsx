@@ -548,14 +548,14 @@ const deleteAllItems = async () => {
     currentItems
       .filter((item) => item.category === activeCategory) 
       .map((item, index) => (
-        <tr key={item._id}>  
+          <tr key={item._id}>  
           <td className="border border-gray-300 p-1 text-black">{item.name}</td>
           <td className="border border-gray-300 p-1 text-black">{item.quantity}</td>
-       <td className="border border-gray-300 p-1 text-black">
-  {typeof item.totalPrice === 'number' && item.totalPrice > 0
-    ? `₱${item.totalPrice.toFixed(2)}`
-    : ''}
-</td>
+          <td className="border border-gray-300 p-1 text-black">
+         {typeof item.totalPrice === 'number' && item.totalPrice > 0
+           ? `₱${item.totalPrice.toFixed(2)}`
+            : ''}
+          </td>
           <td className="border border-gray-300 p-1 text-black">
             <button
               onClick={() => deleteItem(item._id)} 
