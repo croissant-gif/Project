@@ -375,7 +375,7 @@ const deleteAllItems = async () => {
 {isModalOpen && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20">
     <div className="bg-white p-6 rounded-md w-96">
-      <h3 className="text-lg font-semibold mb-4 text-black">Add Custom Preset Item</h3>
+      <h3 className="text-lg font-semibold mb-4 text-black">Add Item</h3>
       
       {/* Item Name Input */}
       <input

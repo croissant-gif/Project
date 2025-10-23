@@ -7,9 +7,14 @@ const RoomSelection = () => {
   const [message, setMessage] = useState("");
   const [roomName, setRoomName] = useState('');
   const [roomType, setRoomType] = useState('');
+  const [viewScheduleModal, setViewScheduleModal] = useState(false);
+const [selectedScheduleRoom, setSelectedScheduleRoom] = useState(null);
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [specialRequestModalOpen, setSpecialRequestModalOpen] = useState(false);
   const [selectedRoomIndex, setSelectedRoomIndex] = useState(null);
+  const [assignmentMap, setAssignmentMap] = useState({});
+  const [scheduleData, setScheduleData] = useState(null);
+const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
   const [specialRequest, setSpecialRequest] = useState('');
   const [employees, setEmployees] = useState([]);
   const [reason, setReason] = useState('');
@@ -25,32 +30,17 @@ const RoomSelection = () => {
     'Vacant Ready', 'Check Out', 'No Show', 'Do not Disturb', 'Out of Order', 'Out of Service', 
     'Status Unclear', 'Make up Room', 'Due Out', 'Did Not Check Out', 'House Use', 'Sleep Out'
   ];
-//===============================================================================================================================================================================================================================================================
-  const [currentPage, setCurrentPage] = useState(1);
-  const roomsPerPage = 5; 
-  const indexOfLastRoom = currentPage * roomsPerPage;
-  const indexOfFirstRoom = indexOfLastRoom - roomsPerPage;
-  const currentRooms = rooms.slice(indexOfFirstRoom, indexOfLastRoom);
-  const totalPages = Math.ceil(rooms.length / roomsPerPage);
+ 
+   // 🆕 Added for assignment modal
+ 
+const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+const [schedule_date, setScheduleDate] = useState('');
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
-          className={`px-3 py-1 mx-1 rounded-full ${currentPage === i ? 'bg-blue-500 text-white' : 'bg-gray-500'}`}
-        >
-          {i}
-        </button>
-      );
-    }
-    return pageNumbers;
-  };
+const [schedule_start, setScheduleStart] = useState('');
+const [schedule_finish, setScheduleFinish] = useState('');
+ 
+ 
+
 //=======================================================================================================================================================================================================
   // Fetch the user-added conditions from MongoDB
   const fetchUserConditions = async () => {
@@ -151,37 +141,46 @@ const RoomSelection = () => {
     }
   };
 //=============================================================================================================================================================================================================================
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const response = await fetch('/api/todos/rooms');
-        const data = await response.json();
-        const formattedRooms = data.map(room => {
-          return {
-            ...room,
-            startTime: room.startTime ? new Date(room.startTime).toLocaleString() : "No start time",
-            finishTime: room.finishTime ? new Date(room.finishTime).toLocaleString() : "No finish time",
-          };
-        });
-        setRooms(formattedRooms);
-      } catch (error) {
-        console.error('Error fetching rooms:', error);
-      }
-    };
-    const fetchEmployees = async () => {
-      try {
-        const response = await fetch('/api/todos/employee');
-        const data = await response.json();
-        setEmployees(data); 
-      } catch (error) {
-        console.error('Error fetching employees:', error);
-      }
-    };
-  
-    fetchRooms();  
+ useEffect(() => {
+  const fetchRooms = async () => {
+    try {
+      const response = await fetch('/api/todos/rooms');
+      const data = await response.json();
+      const formattedRooms = data.map(room => ({
+        ...room,
+        startTime: room.startTime ? new Date(room.startTime).toLocaleString() : "No start time",
+        finishTime: room.finishTime ? new Date(room.finishTime).toLocaleString() : "No finish time",
+      }));
+      setRooms(formattedRooms);
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+    }
+  };
+
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch('/api/todos/employee');
+      const data = await response.json();
+      setEmployees(data); 
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  // Fetch immediately on component mount
+  fetchRooms();  
+  fetchEmployees();
+
+  // Set up polling every 10 seconds
+  const intervalId = setInterval(() => {
+    fetchRooms();
     fetchEmployees();
-  }, []);
-  
+  }, 3000); // 10 seconds
+
+  // Cleanup interval on unmount
+  return () => clearInterval(intervalId);
+}, []);
+
 {/*============================================================================================================================================================================================================*/}
  const handleSpecialRequestChange = (e) => {
     setSpecialRequest(e.target.value);
@@ -223,19 +222,53 @@ const RoomSelection = () => {
 };
 
 //=============================================================================================================================================================================================================================
-  const handleEmployeeChange = (roomIndex, employeeId) => {
-    const updatedRooms = [...rooms];
-    const roomId = updatedRooms[roomIndex]._id;
-    const previousEmployeeId = updatedRooms[roomIndex].assignedTo;
-    if (employeeId && previousEmployeeId !== employeeId) {
-      updatedRooms[roomIndex].startTime = null;  
-      updatedRooms[roomIndex].finishTime = null;
+const handleEmployeeChange = (roomIndex, employeeId) => {
+  const updatedRooms = [...rooms];
+  const roomId = updatedRooms[roomIndex]._id;
+  const previousEmployeeId = updatedRooms[roomIndex].assignedTo;
+
+  if (employeeId && previousEmployeeId !== employeeId) {
+    updatedRooms[roomIndex].startTime = null;  
+    updatedRooms[roomIndex].finishTime = null;
+  }
+
+  updatedRooms[roomIndex].assignedTo = employeeId || null;   
+  setRooms(updatedRooms);
+
+  // 🆕 Open modal if employee is being assigned
+  if (employeeId && employeeId !== previousEmployeeId) {
+    setSelectedRoomIndex(roomIndex);
+    setSelectedEmployeeId(employeeId);
+    setIsModalOpen(true);
+  }
+
+  if (!employeeId) {
+    if (previousEmployeeId) {
+      fetch('/api/todos/employee', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          employeeId: previousEmployeeId,   
+          roomId: roomId,          
+          action: 'remove',          
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to remove room from previous employee');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log('Room removed from previous employee:', data);
+        })
+        .catch((error) => console.error('Error removing room from previous employee:', error));
     }
-    updatedRooms[roomIndex].assignedTo = employeeId || null;   
-    setRooms(updatedRooms);
-    if (!employeeId) {
+  } else {
+    if (employeeId !== previousEmployeeId) {
       if (previousEmployeeId) {
- 
         fetch('/api/todos/employee', {
           method: 'PATCH',
           headers: {
@@ -243,8 +276,8 @@ const RoomSelection = () => {
           },
           body: JSON.stringify({
             employeeId: previousEmployeeId,   
-            roomId: roomId,          
-            action: 'remove',          
+            roomId: roomId,                  
+            action: 'remove',              
           }),
         })
           .then((response) => {
@@ -258,74 +291,51 @@ const RoomSelection = () => {
           })
           .catch((error) => console.error('Error removing room from previous employee:', error));
       }
-    } else {
-      if (employeeId !== previousEmployeeId) {
-        if (previousEmployeeId) {
-          fetch('/api/todos/employee', {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              employeeId: previousEmployeeId,   
-              roomId: roomId,                  
-              action: 'remove',              
-            }),
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error('Failed to remove room from previous employee');
-              }
-              return response.json();
-            })
-            .then((data) => {
-              console.log('Room removed from previous employee:', data);
-            })
-            .catch((error) => console.error('Error removing room from previous employee:', error));
-        }
-        fetch('/api/todos/employee', {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            employeeId,  
-            roomId,    
-            action: 'add',  
-          }),
+
+      fetch('/api/todos/employee', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          employeeId,  
+          roomId,    
+          action: 'add',  
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to assign room to new employee');
+          }
+          return response.json();
         })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error('Failed to assign room to new employee');
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log('Employee assigned to room successfully:', data);
-          })
-          .catch((error) => console.error('Error assigning room to new employee:', error));
-      }
+        .then((data) => {
+          console.log('Employee assigned to room successfully:', data);
+        })
+        .catch((error) => console.error('Error assigning room to new employee:', error));
     }
-    fetch('/api/todos/rooms', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id: roomId,
-        assignedTo: employeeId || null,
-        startTime: null,  
-        finishTime: null,
-      }),
-    })
-    
+  }
+
+  fetch('/api/todos/rooms', {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      id: roomId,
+      assignedTo: employeeId || null,
+      startTime: null,  
+      finishTime: null,
+    }),
+  })
     .then((response) => {
       if (!response.ok) {
         throw new Error('Failed to update room assignment');
       }
     })
     .catch((error) => console.error('Error updating room assignment:', error));
-  };
+};
+
 //=============================================================================================================================================================================================================================
 
   const addRoom = async (e) => {
@@ -532,6 +542,8 @@ const saveReason = async () => {
           </div>
         </div>
       )}
+
+  
 {/*============================================================================================================================================================================================================================= */}
 {/* Modal for Adding New Condition */}
 {isConditionModalOpen &&   (
@@ -688,6 +700,156 @@ const saveReason = async () => {
         </div>
       )}
 {/*============================================================================================================================================================================================================*/}
+    {viewScheduleModal && selectedScheduleRoom && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded shadow-lg w-[300px]">
+      <h2 className="text-lg font-semibold mb-4">Assigned Cleaning Schedule</h2>
+
+      {isLoadingSchedule ? (
+        <p>Loading...</p>
+      ) : scheduleData ? (
+        <>
+          <p className="mb-2 text-sm">
+            <strong>Date:</strong> {scheduleData.schedule_date}
+          </p>
+          <p className="mb-2 text-sm">
+            <strong>Start Time:</strong> {scheduleData.schedule_start}
+          </p>
+          <p className="mb-4 text-sm">
+            <strong>Finish Time:</strong> {scheduleData.schedule_finish}
+          </p>
+        </>
+      ) : (
+        <p className="text-sm text-red-500">No schedule data found.</p>
+      )}
+
+      <div className="flex justify-end">
+        <button
+          onClick={() => {
+            setViewScheduleModal(false);
+            setSelectedScheduleRoom(null);
+            setScheduleData(null);
+          }}
+          className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+     {isModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded shadow-lg w-[300px]">
+      <h2 className="text-lg font-semibold mb-4">Assign Cleaning Time</h2>
+
+      <div className="mb-2">
+        <label className="block text-sm">Date:</label>
+        <input
+          type="date"
+          value={schedule_date}
+onChange={(e) => setScheduleDate(e.target.value)}
+
+          className="w-full border rounded p-1"
+        />
+      </div>
+
+      <div className="mb-2">
+        <label className="block text-sm">Start Time:</label>
+        <input
+          type="time"
+         value={schedule_start}
+onChange={(e) => setScheduleStart(e.target.value)}
+
+          className="w-full border rounded p-1"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm">Finish Time:</label>
+        <input
+          type="time"
+       value={schedule_finish}
+onChange={(e) => setScheduleFinish(e.target.value)}
+
+          className="w-full border rounded p-1"
+        />
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="bg-gray-300 px-3 py-1 rounded"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={async () => {
+            const updatedRooms = [...rooms];
+            const selectedRoom = updatedRooms[selectedRoomIndex];
+
+            // Update local state
+           selectedRoom.assignmentDetails = {
+  schedule_date,
+  schedule_start,
+  schedule_finish,
+};
+selectedRoom.schedule_start = schedule_start;
+selectedRoom.schedule_finish = schedule_finish;
+
+            setRooms(updatedRooms);
+
+            // Persist to backend
+            try {
+              const response = await fetch('/api/todos/employee', {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+               body: JSON.stringify({
+  employeeId: selectedEmployeeId,
+  roomId: selectedRoom._id,
+  action: 'add',
+  schedule_date,
+  schedule_start,
+  schedule_finish,
+}),
+
+              });
+
+              if (!response.ok) {
+                throw new Error('Failed to assign room with time');
+              }
+
+              const result = await response.json();
+              console.log('Room assigned with time:', result);
+            } catch (error) {
+              console.error('Error assigning room with time:', error);
+            }
+
+            // Reset modal state
+            setIsModalOpen(false);
+          setScheduleDate('');
+ setScheduleStart('');
+ setScheduleFinish('');
+          }}
+          className="bg-blue-600 text-white px-3 py-1 rounded"
+       disabled={!schedule_date || !schedule_start || !schedule_finish}
+
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+     
       {/* Rooms Table */}
       <div className="overflow-x-auto max-h-[650px] overflow-y-auto font-montserrat">
   <table className="table-auto w-full rounded-2xl m-6 bg-white shadow-lg font-montserrat">
@@ -805,6 +967,67 @@ const saveReason = async () => {
 
       {/* Buttons for Special Request and Deletion */}
       <td className="px-2 py-3">
+<button
+  onClick={async () => {
+    if (!room.assignedTo) return;
+
+    setIsLoadingSchedule(true);
+
+    try {
+     const response = await fetch(`/api/todos/employee?id=${room.assignedTo}`);
+
+      if (!response.ok) throw new Error("Failed to fetch employee data");
+
+      const employee = await response.json();
+
+      const assignedRoom = employee.assignedRooms?.find((r) => {
+        const roomIdFromMongo = typeof r.roomId === 'object' ? r.roomId.$oid || r.roomId : r.roomId;
+        return roomIdFromMongo === room._id;
+      });
+
+      if (assignedRoom) {
+        setScheduleData(assignedRoom); // Save the schedule info to modal state
+      } else {
+        setScheduleData(null);
+      }
+    } catch (error) {
+      console.error("Error fetching schedule data:", error);
+      setScheduleData(null);
+    } finally {
+      setIsLoadingSchedule(false);
+      setSelectedScheduleRoom(room); // Show the modal anyway
+      setViewScheduleModal(true);
+    }
+  }}
+  disabled={!room.assignedTo}
+  className={`p-2 rounded-full ml-1 transition duration-300 ${
+    room.assignedTo
+      ? "bg-blue-500 text-white hover:bg-blue-600"
+      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+  }`}
+  title={
+    room.assignedTo
+      ? "View or Assign Cleaning Schedule"
+      : "Assign employee first"
+  }
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-5 h-5"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+    />
+  </svg>
+</button>
+
+
         <button
           onClick={() => {
             setSelectedRoomIndex(index);
@@ -831,8 +1054,6 @@ const saveReason = async () => {
   ))}
 </tbody>
         </table>
- 
-{/*============================================================================================================================================================================================================*/}
       </div>   
    
 

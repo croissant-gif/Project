@@ -25,7 +25,10 @@ export async function POST(request) {
     status = '',
     arrivalDate = null,
     departureDate = null,
-    arrivalTime = ''
+    arrivalTime = '',
+    schedule_start = '',
+    schedule_finish = '',
+    schedule_date = '',
   } = body;
 
   if (!roomName || !roomType) {
@@ -42,6 +45,10 @@ export async function POST(request) {
       arrivalDate,
       departureDate,
       arrivalTime,
+      schedule_start,
+      schedule_finish,
+      schedule_date,
+      // Add createdAt field for consistency
       createdAt: new Date(),
     });
 

@@ -15,6 +15,9 @@ const roomSchema = new mongoose.Schema(
     finishTime: { type: Date, default: null },  
     createdAt: { type: Date, default: Date.now },
     condition: { type: String, default: '' },
+         schedule_date: { type: String, default: '' },         // Date of assignment (e.g. '2025-08-05')
+      schedule_start: { type: String, default: '' },   // e.g. '09:00'
+      schedule_finish: { type: String, default: '' },
   },
   {
     timestamps: true,
