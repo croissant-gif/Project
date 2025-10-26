@@ -82,18 +82,44 @@ export async function DELETE(request) {
 
 export async function PUT(request) {
   const body = await request.json();
-  const { _id, roomName, roomType, status, arrivalDate, departureDate, arrivalTime, assignedTo, reason } = body;
+  const {
+    _id,
+    id,
+    roomName,
+    roomType,
+    status,
+    arrivalDate,
+    departureDate,
+    arrivalTime,
+    assignedTo,
+    reason,
+  } = body;
 
-  if (!_id) {
+  // ✅ Support both `_id` and `id` from frontend
+  const roomId = _id || id;
+
+  if (!roomId) {
     return new Response('Room ID is required', { status: 400 });
   }
 
   try {
-        const updatedRoom = await Rooms.findByIdAndUpdate(
-      _id, 
-      { roomName, roomType, status, arrivalDate, departureDate, arrivalTime, assignedTo, reason }, 
-      { new: true }  
+    // ✅ Only include defined fields to prevent overwriting with undefined
+    const updateFields = Object.fromEntries(
+      Object.entries({
+        roomName,
+        roomType,
+        status,
+        arrivalDate,
+        departureDate,
+        arrivalTime,
+        assignedTo,
+        reason,
+      }).filter(([_, v]) => v !== undefined)
     );
+
+    const updatedRoom = await Rooms.findByIdAndUpdate(roomId, updateFields, {
+      new: true,
+    });
 
     if (!updatedRoom) {
       return new Response('Room not found', { status: 404 });

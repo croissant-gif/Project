@@ -20,6 +20,7 @@ const [isLoadingSchedule, setIsLoadingSchedule] = useState(false);
   const [reason, setReason] = useState('');
   const [status, setStatus] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [userConditions, setUserConditions] = useState([]);
   const [newCondition, setNewCondition] = useState('');
@@ -84,6 +85,9 @@ const [schedule_finish, setScheduleFinish] = useState('');
 
 
   
+useEffect(() => {
+  localStorage.removeItem('rooms');
+}, []);
 
 
   {/*============================================================================================================================================================================================================*/}
@@ -171,14 +175,6 @@ const [schedule_finish, setScheduleFinish] = useState('');
   fetchRooms();  
   fetchEmployees();
 
-  // Set up polling every 10 seconds
-  const intervalId = setInterval(() => {
-    fetchRooms();
-    fetchEmployees();
-  }, 3000); // 10 seconds
-
-  // Cleanup interval on unmount
-  return () => clearInterval(intervalId);
 }, []);
 
 {/*============================================================================================================================================================================================================*/}
@@ -428,37 +424,69 @@ const deleteRoom = async (roomId) => {
 //=====================================================================================================================================================================================================
 
 const handleRoomChange = async (e, index, field) => {
-  const newValue = e.target.value;
+  const value = e.target.value;
   const updatedRooms = [...rooms];
-  updatedRooms[index][field] = newValue;
-  setRooms(updatedRooms);
-  localStorage.setItem('rooms', JSON.stringify(updatedRooms));
+  const room = updatedRooms[index];
 
+  // 🧠 Detect when status is being changed
+  if (field === "status") {
+    const previousStatus = room.status;
 
-  if (newValue === "Out of Order" || newValue === "Out of Service") {
-    setSelectedRoomIndex(index);
-    setIsModalOpen(true)
-    return;  
+    // Update the status locally
+    room.status = value;
+
+    // ✅ If the old status was Out of Order/Service and the new one isn't — clear the reason
+    if (
+      (previousStatus === "Out of Order" || previousStatus === "Out of Service") &&
+      (value !== "Out of Order" && value !== "Out of Service")
+    ) {
+      room.reason = ""; // clear it locally
+
+      // Also clear it in the database
+      try {
+        await fetch("/api/todos/rooms", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            _id: room._id,
+            status: value,
+            reason: "", // clear it server-side
+          }),
+        });
+      } catch (error) {
+        console.error("Error clearing reason when changing status:", error);
+      }
+
+      setRooms(updatedRooms);
+      localStorage.setItem("rooms", JSON.stringify(updatedRooms));
+      return;
+    }
+
+    // 🧩 If new status is Out of Order/Service → open modal (existing logic)
+    if (value === "Out of Order" || value === "Out of Service") {
+      setSelectedRoomIndex(index);
+      setIsReasonModalOpen(true);
+      return;
+    }
   }
 
- 
-  const updatedRoom = updatedRooms[index];
-  try {
-    const response = await fetch('/api/todos/rooms', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedRoom),
-    });
+  // ✅ Default behavior for other fields
+  room[field] = value;
+  setRooms(updatedRooms);
+  localStorage.setItem("rooms", JSON.stringify(updatedRooms));
 
-    if (!response.ok) {
-      throw new Error('Failed to update room status');
-    }
+  // Persist to DB for normal field changes
+  try {
+    await fetch("/api/todos/rooms", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(room),
+    });
   } catch (error) {
-    console.error('Error updating room status:', error);
+    console.error("Error updating room:", error);
   }
 };
+
 
 
 const handleReasonChange = (e) => {
@@ -471,7 +499,7 @@ const saveReason = async () => {
     updatedRooms[selectedRoomIndex].reason = reason;
     setRooms(updatedRooms);
     localStorage.setItem('rooms', JSON.stringify(updatedRooms));
-    setIsModalOpen(false); 
+    setIsReasonModalOpen(false); 
     const updatedRoom = updatedRooms[selectedRoomIndex];
     try {
       const response = await fetch('/api/todos/rooms', {
@@ -479,7 +507,12 @@ const saveReason = async () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedRoom),
+    body: JSON.stringify({
+  _id: updatedRoom._id, // ✅ ensure ID field is present
+  status: updatedRoom.status,
+  reason: updatedRoom.reason,
+}),
+
       });
       if (!response.ok) {
         throw new Error('Failed to update room status');
@@ -514,7 +547,7 @@ const saveReason = async () => {
 {/*=============================================================================================================================================================================================================================
 
   {/* Modal for Reason */}
-  {isModalOpen && !selectedRoom && (
+  {isReasonModalOpen && !selectedRoom && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50  z-20">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold mb-4 text-black font-montserrat">Reason </h2>
@@ -533,7 +566,7 @@ const saveReason = async () => {
               </button>
               <button
                 type="button"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => setIsReasonModalOpen(false)}
                 className="bg-red-500 text-white px-4 py-2 rounded-md transition font-montserrat transform active:scale-95"
               >
                 Cancel
