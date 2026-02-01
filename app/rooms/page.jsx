@@ -772,46 +772,82 @@ const saveReason = async () => {
   </div>
 )}
 
-
-
-     {isModalOpen && (
+{isModalOpen && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded shadow-lg w-[300px]">
       <h2 className="text-lg font-semibold mb-4">Assign Cleaning Time</h2>
 
+      {/* Date Field */}
       <div className="mb-2">
         <label className="block text-sm">Date:</label>
         <input
           type="date"
           value={schedule_date}
-onChange={(e) => setScheduleDate(e.target.value)}
-
+          min={new Date().toISOString().split("T")[0]} // ✅ Only today or future
+          onChange={(e) => setScheduleDate(e.target.value)}
           className="w-full border rounded p-1"
         />
       </div>
 
+      {/* Start Time Field */}
       <div className="mb-2">
         <label className="block text-sm">Start Time:</label>
         <input
           type="time"
-         value={schedule_start}
-onChange={(e) => setScheduleStart(e.target.value)}
+          value={schedule_start}
+          onChange={(e) => {
+            const selectedTime = e.target.value;
+            const today = new Date().toISOString().split("T")[0];
 
+            // If selected date is today → prevent past times
+            if (schedule_date === today) {
+              const now = new Date();
+              const [hours, minutes] = selectedTime.split(":");
+              const selected = new Date();
+              selected.setHours(Number(hours), Number(minutes), 0, 0);
+
+              if (selected < now) {
+                alert("You cannot select a past time for today.");
+                return;
+              }
+            }
+
+            setScheduleStart(selectedTime);
+          }}
           className="w-full border rounded p-1"
         />
       </div>
 
+      {/* Finish Time Field */}
       <div className="mb-4">
         <label className="block text-sm">Finish Time:</label>
         <input
           type="time"
-       value={schedule_finish}
-onChange={(e) => setScheduleFinish(e.target.value)}
+          value={schedule_finish}
+          onChange={(e) => {
+            const selectedTime = e.target.value;
+            const today = new Date().toISOString().split("T")[0];
 
+            // If selected date is today → prevent past times
+            if (schedule_date === today) {
+              const now = new Date();
+              const [hours, minutes] = selectedTime.split(":");
+              const selected = new Date();
+              selected.setHours(Number(hours), Number(minutes), 0, 0);
+
+              if (selected < now) {
+                alert("You cannot select a past finish time for today.");
+                return;
+              }
+            }
+
+            setScheduleFinish(selectedTime);
+          }}
           className="w-full border rounded p-1"
         />
       </div>
 
+      {/* Action Buttons */}
       <div className="flex justify-end gap-2">
         <button
           onClick={() => setIsModalOpen(false)}
@@ -826,53 +862,50 @@ onChange={(e) => setScheduleFinish(e.target.value)}
             const selectedRoom = updatedRooms[selectedRoomIndex];
 
             // Update local state
-           selectedRoom.assignmentDetails = {
-  schedule_date,
-  schedule_start,
-  schedule_finish,
-};
-selectedRoom.schedule_start = schedule_start;
-selectedRoom.schedule_finish = schedule_finish;
-
+            selectedRoom.assignmentDetails = {
+              schedule_date,
+              schedule_start,
+              schedule_finish,
+            };
+            selectedRoom.schedule_start = schedule_start;
+            selectedRoom.schedule_finish = schedule_finish;
             setRooms(updatedRooms);
 
             // Persist to backend
             try {
-              const response = await fetch('/api/todos/employee', {
-                method: 'PATCH',
+              const response = await fetch("/api/todos/employee", {
+                method: "PATCH",
                 headers: {
-                  'Content-Type': 'application/json',
+                  "Content-Type": "application/json",
                 },
-               body: JSON.stringify({
-  employeeId: selectedEmployeeId,
-  roomId: selectedRoom._id,
-  action: 'add',
-  schedule_date,
-  schedule_start,
-  schedule_finish,
-}),
-
+                body: JSON.stringify({
+                  employeeId: selectedEmployeeId,
+                  roomId: selectedRoom._id,
+                  action: "add",
+                  schedule_date,
+                  schedule_start,
+                  schedule_finish,
+                }),
               });
 
               if (!response.ok) {
-                throw new Error('Failed to assign room with time');
+                throw new Error("Failed to assign room with time");
               }
 
               const result = await response.json();
-              console.log('Room assigned with time:', result);
+              console.log("Room assigned with time:", result);
             } catch (error) {
-              console.error('Error assigning room with time:', error);
+              console.error("Error assigning room with time:", error);
             }
 
             // Reset modal state
             setIsModalOpen(false);
-          setScheduleDate('');
- setScheduleStart('');
- setScheduleFinish('');
+            setScheduleDate("");
+            setScheduleStart("");
+            setScheduleFinish("");
           }}
           className="bg-blue-600 text-white px-3 py-1 rounded"
-       disabled={!schedule_date || !schedule_start || !schedule_finish}
-
+          disabled={!schedule_date || !schedule_start || !schedule_finish}
         >
           Save
         </button>
@@ -880,6 +913,7 @@ selectedRoom.schedule_finish = schedule_finish;
     </div>
   </div>
 )}
+
 
 
      

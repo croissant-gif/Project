@@ -61,7 +61,7 @@ export default function CleaningLogsPage() {
 
   return (
       <section className="w-full bg-gray-50 min-h-screen font-montserrat">
-      <div className="h-[7%] p-3 bg-zinc-300 flex justify-between items-center shadow-md">
+      <div className="h-[7%] p-3 bg-zinc-300 flex justify-between items-center shadow-md text-black">
   <h1 className="font-medium text-lg text-black font-montserrat">CLeaning Logs</h1>
   
  
@@ -69,7 +69,7 @@ export default function CleaningLogsPage() {
    
  
  </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto text-black">
         
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">
           <thead className="bg-gray-100 text-gray-700">
